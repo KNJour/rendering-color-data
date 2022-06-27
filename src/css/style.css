@@ -20,3 +20,8 @@ body {
 .mark {
     fill: #137B00;
 }
+
+.axisLabel {
+    font-size:2em;
+    fill: #0f448a;
+}

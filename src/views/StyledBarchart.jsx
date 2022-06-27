@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import{ csv, arc, pie, scaleBand, scaleLinear, max }from 'd3';
+import{ csv, arc, pie, scaleBand, scaleLinear, max, format }from 'd3';
 import { DataFetch } from '../components/DataFetch';
 import { AxisX, AxisY } from '../components/AxisXY';
 import { Marks } from '../components/Marks';
@@ -10,13 +10,15 @@ const popUrl = 'https://gist.githubusercontent.com/curran/0ac4077c7fc6390f5dd33b
 
 
 const width = 960;
-const height = 500;
+const height = 600;
 const margin = {
     top: 20,
     right: 20,
     left: 195,
-    bottom: 20
+    bottom: 50
 };
+
+const xAxisLabelOffset = 45;
 
 
 
@@ -38,6 +40,10 @@ const RefactoredBarchart = () => {
 
     const yValue = d => d.Country;
     const xValue = d => d.Population;
+    
+    const tooltipFormat = format(',.0f');
+    const siFormat = format('.2s');
+    const xAxisTickFormat = tickValue => siFormat(tickValue).replace('G', 'B');
 
     const xScale = scaleLinear()
     .domain([0, max(data, xValue)]) 
@@ -60,7 +66,12 @@ const RefactoredBarchart = () => {
         <g transform={`translate(${margin.left}, ${margin.top})`}>
             {/* LINES WITH POPULATION VALUES USING xSCALE */}
             
-            <AxisX xScale={xScale} innerHeight={innerHeight}/>
+            <AxisX xScale={xScale} innerHeight={innerHeight} tickFormat={xAxisTickFormat}/>
+            <text 
+                className="axisLabel"
+                x={innerWidth / 2} 
+                textAnchor="middle"  
+                y={innerHeight + xAxisLabelOffset}>Population</text>
             <AxisY yScale={yScale}/>
                 {/* COUNT NAMES USING Y SCALE. TICKS DO NOT APPLY TO THE BANDWIDTH SO YOU USE DOMAIN INSTEAD */}
             <Marks 
@@ -69,6 +80,7 @@ const RefactoredBarchart = () => {
             xScale={xScale}
             xValue={xValue}
             yValue={yValue}
+            tooltipFormat={tooltipFormat}
             />
         </g>
     </svg>
